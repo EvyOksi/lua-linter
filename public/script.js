@@ -1,19 +1,32 @@
-document.getElementById('lintButton').addEventListener('click', function () {
-  const code = document.getElementById('codeInput').value;
+document.addEventListener("DOMContentLoaded", function () {
+    const editorElement = document.getElementById("luaEditor");
+    const resultElement = document.getElementById("lintResults");
 
-  fetch('/api/lint', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ code: code }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      const results = document.getElementById('results');
-      results.textContent = data.message || 'No issues found!';
-    })
-    .catch((error) => {
-      console.error('Error:', error);
+    const editor = CodeMirror.fromTextArea(editorElement, {
+        mode: "lua",
+        lineNumbers: true,
+        theme: "default",
+        gutters: ["CodeMirror-linenumbers", "lint-gutter"],
     });
+
+    function lintCode() {
+        const code = editor.getValue();
+
+        fetch("/api/lint", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultElement.textContent = data.message;
+            resultElement.style.color = data.message.includes("Error") ? "red" : "green";
+        })
+        .catch(() => {
+            resultElement.textContent = "Error communicating with server.";
+            resultElement.style.color = "red";
+        });
+    }
+
+    editor.on("change", lintCode); // Automatically lint when text changes
 });
