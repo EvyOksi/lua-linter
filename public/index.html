@@ -5,57 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lua Linter</title>
 
-    <!-- CodeMirror Styles -->
     <link rel="stylesheet" href="codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="codemirror/theme/monokai.css">
-    <link rel="stylesheet" href="codemirror/addon/lint/lint.css">
     <link rel="stylesheet" href="styles.css">
 
-    <!-- CodeMirror Scripts -->
     <script src="codemirror/lib/codemirror.js"></script>
     <script src="codemirror/mode/lua/lua.js"></script>
-    <script src="codemirror/keymap/sublime.js"></script>
-    <script src="codemirror/addon/lint/lint.js"></script>
 </head>
 <body>
+    <textarea id="luaEditor"></textarea>
+    <div id="lintResults"></div>
 
-    <!-- Code Editor -->
-    <textarea id="codeInput"></textarea>
-
-    <!-- Lint Results -->
-    <pre id="results"></pre>
-
-    <script>
-        // Initialize CodeMirror
-        var editor = CodeMirror.fromTextArea(document.getElementById("codeInput"), {
-            mode: "lua",
-            theme: "monokai",
-            lineNumbers: true,
-            gutters: ["CodeMirror-lint-markers"],
-            lint: true
-        });
-
-        // Function to Lint in Real-Time
-        function lintCode() {
-            const code = editor.getValue();
-
-            fetch('/api/lint', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("results").textContent = data.message || "No issues found!";
-            })
-            .catch(error => {
-                console.error("Error:", error);
-            });
-        }
-
-        // Run Linting on Change
-        editor.on("change", lintCode);
-    </script>
-
+    <script src="editor.js"></script>
 </body>
 </html>
