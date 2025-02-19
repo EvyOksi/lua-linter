@@ -1,23 +1,29 @@
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+    if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method Not Allowed" });
+    }
+
     const { code } = req.body;
 
-    // Simulating linting process - replace with actual Lua linter logic
-    const lintResults = await lintLuaCode(code);
+    if (!code) {
+        return res.status(400).json({ error: "No code provided." });
+    }
 
-    // Send linting results back to the frontend
-    res.status(200).json({ message: lintResults });
-  } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
-  }
+    try {
+        // Call an external Lua linter (or use a library if available)
+        // This is a placeholder: you'll need an actual Lua linting service
+        const lintResults = fakeLuaLinter(code); 
+
+        res.status(200).json({ message: lintResults });
+    } catch (error) {
+        res.status(500).json({ error: "Linting failed." });
+    }
 }
 
-// Simulate a Lua linter response for now
-async function lintLuaCode(code) {
-  // For demonstration, check if 'error' is present in the code.
-  // Replace this with a call to a real Lua linter API.
-  if (code.includes('error')) {
-    return 'Syntax error detected in the code!';
-  }
-  return 'No issues found!';
+// Placeholder Lua Linter (Replace with actual implementation)
+function fakeLuaLinter(code) {
+    if (code.includes("error")) {
+        return "Syntax Error: Unexpected token 'error'";
+    }
+    return "No issues found!";
 }
