@@ -9,7 +9,10 @@
   <body>
     <div id="container">
       <h1>Lua Linter</h1>
-      <textarea id="codeInput" placeholder="Write your Lua code here..."></textarea>
+      <div id="editor-container">
+        <div id="line-numbers"></div>
+        <textarea id="codeInput" placeholder="Write your Lua code here..."></textarea>
+      </div>
       <button id="lintButton">Lint Code</button>
       <pre id="results"></pre>
     </div>
