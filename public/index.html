@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lua Linter</title>
@@ -16,56 +16,46 @@
     <script src="codemirror/mode/lua/lua.js"></script>
     <script src="codemirror/keymap/sublime.js"></script>
     <script src="codemirror/addon/lint/lint.js"></script>
-
-    <!-- Other Scripts -->
-    <script src="editor.js"></script>
-    <script src="rts.js"></script>
-    <script src="lib.js"></script>
-    <script src="out.js"></script>
-  </head>
-
-  <body>
-    <h1>Lua Code Linter</h1>
+</head>
+<body>
 
     <!-- Code Editor -->
     <textarea id="codeInput"></textarea>
 
-    <!-- Lint Button -->
-    <button id="lintButton">Lint Code</button>
-
     <!-- Lint Results -->
     <pre id="results"></pre>
 
-    <!-- Run Main Script -->
-    <script src="runmain.js" defer></script>
-    <script src="script.js"></script>
-
     <script>
-      // Initialize CodeMirror
-      var editor = CodeMirror.fromTextArea(document.getElementById("codeInput"), {
-        mode: "lua",
-        theme: "monokai",
-        lineNumbers: true,
-        gutters: ["CodeMirror-lint-markers"],
-        lint: true
-      });
-
-      document.getElementById("lintButton").addEventListener("click", function () {
-        const code = editor.getValue();
-
-        fetch('/api/lint', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code })
-        })
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById("results").textContent = data.message || "No issues found!";
-        })
-        .catch(error => {
-          console.error("Error:", error);
+        // Initialize CodeMirror
+        var editor = CodeMirror.fromTextArea(document.getElementById("codeInput"), {
+            mode: "lua",
+            theme: "monokai",
+            lineNumbers: true,
+            gutters: ["CodeMirror-lint-markers"],
+            lint: true
         });
-      });
+
+        // Function to Lint in Real-Time
+        function lintCode() {
+            const code = editor.getValue();
+
+            fetch('/api/lint', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("results").textContent = data.message || "No issues found!";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+
+        // Run Linting on Change
+        editor.on("change", lintCode);
     </script>
-  </body>
+
+</body>
 </html>
